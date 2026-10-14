@@ -10,7 +10,7 @@ const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-int
 
 export const metadata: Metadata = {
   title: `${BRAND} · Towing in Darwin`,
-  description: "Broken down in Darwin? Fast local towing. Local operators, price agreed up front. Call us and we'll get a truck to you.",
+  description: "Broken down in Darwin? Call and we'll connect you with a local independent tow operator. The price is agreed on the phone before a truck is sent.",
   formatDetection: { telephone: false },
 };
 

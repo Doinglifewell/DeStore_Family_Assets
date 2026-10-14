@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
+    "html": "node scripts/make-html.mjs",
     "test": "node tests/landing.test.mjs"
   },
   "dependencies": {

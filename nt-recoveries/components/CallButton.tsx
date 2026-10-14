@@ -1,21 +1,15 @@
-"use client";
-/* The page's one action. A plain tel: link, so it dials even with JavaScript
-   off or a tag blocked; the tap is counted on the way out (GA4 "click_to_call"
-   and the Google Ads click conversion), never in the way of the call. */
+/* The page's one action. A plain tel: link to CALL_NUMBER, so it dials even
+   with JavaScript off or a tag blocked. Taps are counted by lib/ntr-track.js,
+   which listens on the whole page, so nothing here has to run in the browser.
+
+   No aria-label: the visible words ("Call now" and the number) are the
+   button's name, so when a call-tracking script swaps the number on screen,
+   a screen reader reads the same new number. Every number on the page sits
+   in a [data-number] element; the standalone HTML copy fills them from its
+   own CALL_NUMBER. */
 
 import type { ReactNode } from "react";
-import { ADS_CALL_CLICK_LABEL, ADS_ID, PHONE, PHONE_TEL } from "@/lib/config";
-
-type Gtag = (...args: unknown[]) => void;
-
-export function countCall(where: string) {
-  const g = (window as unknown as { gtag?: Gtag }).gtag;
-  if (typeof g !== "function") return;
-  try {
-    g("event", "click_to_call", { link_location: where, transport_type: "beacon" });
-    if (ADS_ID && ADS_CALL_CLICK_LABEL) g("event", "conversion", { send_to: `${ADS_ID}/${ADS_CALL_CLICK_LABEL}`, transport_type: "beacon" });
-  } catch { /* a tag that throws never stops the call */ }
-}
+import { CALL_NUMBER, CALL_TEL } from "@/lib/config";
 
 export function PhoneIcon({ className = "" }: { className?: string }) {
   return (
@@ -25,23 +19,21 @@ export function PhoneIcon({ className = "" }: { className?: string }) {
   );
 }
 
-/** The big amber button: "Call now" and the number, dialling PHONE. */
-export function CallButton({ where, children, className = "" }: { where: string; children?: ReactNode; className?: string }) {
+/** The big amber button. "hero": full width with the number in large text. "bar": the sticky bar's. */
+export function CallButton({ where, size = "hero" }: { where: string; size?: "hero" | "bar" }) {
+  const hero = size === "hero";
   return (
-    <a href={PHONE_TEL} onClick={() => countCall(where)} data-call={where}
-      className={`call-btn ${className}`} aria-label={`Call ${PHONE}`}>
-      <PhoneIcon className="h-7 w-7 shrink-0" />
-      {children ?? (
-        <span className="flex flex-col items-start leading-tight">
-          <span className="text-[20px] font-bold">Call now</span>
-          <span className="text-[17px] font-semibold tabular-nums">{PHONE}</span>
-        </span>
-      )}
+    <a href={CALL_TEL} data-call={where} className={`call-btn w-full ${hero ? "call-btn-hero" : ""}`}>
+      <PhoneIcon className={hero ? "h-9 w-9 shrink-0" : "h-7 w-7 shrink-0"} />
+      <span className="flex flex-col items-start leading-tight">
+        <span className={hero ? "text-[19px] font-bold" : "text-[18px] font-bold"}>Call now</span>
+        <span data-number className={hero ? "call-number font-bold tabular-nums" : "text-[19px] font-bold tabular-nums"}>{CALL_NUMBER}</span>
+      </span>
     </a>
   );
 }
 
-/** A call link in a sentence (the footer): the same number, counted the same way. */
+/** A call link in a sentence (the footer): the same number. */
 export function CallLink({ where, className = "", children }: { where: string; className?: string; children: ReactNode }) {
-  return <a href={PHONE_TEL} onClick={() => countCall(where)} data-call={where} className={className}>{children}</a>;
+  return <a href={CALL_TEL} data-call={where} className={className}>{children}</a>;
 }

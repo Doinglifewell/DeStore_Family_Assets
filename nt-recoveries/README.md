@@ -1,9 +1,18 @@
 # NT Recoveries: a Darwin towing demand test
 
-One page with one job: get somebody broken down in Darwin to call. There is no
-form, no payment and no map, only the Call button. The design and wording follow
-the Towapp customer handover: warm off-white, beacon amber, deep navy, Inter,
-mobile first, no exclamation marks, WCAG AA contrast, tap targets of 48px or more.
+Call only. One page with one job: get somebody broken down in Darwin to call.
+The number is a call-tracking number that routes to a partner tow operator.
+There is no form, payment, map or matching step, only the Call button (there
+never was one, so there is nothing hidden to bring back). The design and
+wording follow the Towapp customer handover: warm off-white, beacon amber,
+deep navy, Inter, mobile first, no exclamation marks, WCAG AA contrast, tap
+targets of 48px or more.
+
+**What the page may say:** we connect callers with a local independent tow
+operator, and the price is agreed on the phone before a truck is sent. Never
+that we own, run or send trucks, and never the operator's name. The footer
+says plainly that NT Recoveries doesn't own or run tow trucks. The tests check
+the words.
 
 It exists to answer two questions with real Google Ads money before anything
 else gets built:
@@ -17,14 +26,16 @@ else gets built:
 npm install
 npm run dev          # http://localhost:3000
 npm run typecheck
-npm test             # builds twice and checks the page in Chromium (37 checks)
+npm run html         # remakes nt-recoveries.html from the page
+npm test             # three builds, then the page and the HTML copy in Chromium (89 checks)
 ```
 
 `npm test` needs Playwright's Chromium (preinstalled here). It builds the page
-as it ships (placeholder number, no tags) and with a number and tags set, then
-checks the copy, the tel links, the sticky bar, tap sizes, contrast in light
-and dark, that no Google tag loads until an ID is set, and that a tap on Call
-fires GA4's `click_to_call` and the Ads conversion.
+as it ships (`.env.example`'s placeholder IDs), with a number and tags, and with
+a call-tracking script, then checks the copy, the tel links, the pinned bar,
+tap sizes, contrast in light and dark, that placeholder IDs load nothing, that
+every tap on a Call link fires GA4's `click_to_call` and the Ads conversion,
+that 000 never does, and that the HTML copy is current.
 
 ## Go live on Vercel
 
@@ -38,21 +49,38 @@ Vercel builds production from the repository's default branch. This repo's
 only branch is `claude/nt-recoveries-analysis-3bmdcz`, so that is the one
 until a `main` exists.
 
+### The number: `CALL_NUMBER`
+
+`CALL_NUMBER` in `lib/config.ts` is the one place the number lives. Every Call
+button, the pinned bar, the footer and Google's forwarding-number setup read
+it. It is `0400 000 000` for now; swap in the call-tracking number, written as
+it should be read (`0412 345 678`). Until it is swapped, a dark banner at the
+top says the number is a placeholder. **Don't run ads, or test-call it,
+before then:** `0400 000 000` may belong to a real person.
+`NEXT_PUBLIC_CALL_NUMBER` on Vercel overrides it without a code change.
+
 ### Environment variables
 
-Every one is optional. Leave one empty and that part stays off, so the page
-works with none set.
+`.env.example` lists them with placeholder IDs (`G-XXXXXXXXXX`,
+`AW-XXXXXXXXXX`). A placeholder or an empty value keeps that part off: nothing
+loads and nothing is sent until the ID is real.
 
 | Name | What it is |
 |---|---|
-| `NEXT_PUBLIC_PHONE` | The number every Call button dials, written as it should read: `08 8123 4567`. Until set, the page shows `08 5550 0123` (ACMA's drama range, rings nobody) and a banner saying it is a placeholder. **Do not run ads until this is set.** |
 | `NEXT_PUBLIC_GA4_ID` | GA4 web stream Measurement ID, `G-…` |
 | `NEXT_PUBLIC_ADS_ID` | Google Ads tag ID, `AW-…` |
-| `NEXT_PUBLIC_ADS_CALL_CLICK_LABEL` | Conversion label for a tap on a Call button |
-| `NEXT_PUBLIC_ADS_WEBSITE_CALL_LABEL` | Conversion label for "Calls to a phone number on your website" (Google's forwarding number) |
+| `NEXT_PUBLIC_ADS_CALL_CLICK_LABEL` | Conversion label fired on every tap of a Call link |
+| `NEXT_PUBLIC_ADS_WEBSITE_CALL_LABEL` | Optional: Google's own forwarding number. Left off while a call-tracking script is set |
+| `NEXT_PUBLIC_DNI_SCRIPT_URL` | The call-tracking provider's dynamic number insertion script (https) |
+| `NEXT_PUBLIC_CALL_NUMBER` | Optional override of `CALL_NUMBER` |
 
-Where each one is used is written out at the top of
-`components/Tracking.tsx` and in `lib/config.ts`.
+Every tap on a `tel:` link to the number (hero, pinned bar, footer, and any
+link the provider's script rewrites or adds) sends GA4 `click_to_call` with
+where it was tapped, and the Ads conversion. **Taps on "Call 000 first." are
+never counted:** an emergency call is not a lead, and counting it would teach
+Google's bidding to find more of them. The code is `lib/ntr-track.js`, shared
+by both copies of the page; where each piece goes is written out at the top of
+`components/Tracking.tsx`.
 
 ### Setting up the Google side
 
@@ -70,18 +98,23 @@ Where each one is used is written out at the top of
      `NEXT_PUBLIC_ADS_CALL_CLICK_LABEL`. Counts taps, which is not the same as
      a call that happened.
    Make the website-call conversion the **primary** one; taps are secondary.
-3. **A call-tracking provider instead** (Delacon, CallRail, Calltrak): put
-   their number in `NEXT_PUBLIC_PHONE`, or their number-swap script in the
-   CALL-TRACKING SCRIPT slot in `components/Tracking.tsx`.
+3. **The call-tracking provider** (Delacon, CallRail, CallTrackingMetrics,
+   Calltrak): put their main tracking number in `CALL_NUMBER`, routed to the
+   partner operator. For a number per ad or per visitor, put their dynamic
+   number insertion script's address in `NEXT_PUBLIC_DNI_SCRIPT_URL` (a
+   snippet that is more than one address goes in the DNI SNIPPET slot in
+   `components/Tracking.tsx`), and tell them the number to replace is
+   `CALL_NUMBER` exactly as written. With a provider, leave
+   `NEXT_PUBLIC_ADS_WEBSITE_CALL_LABEL` empty and import the provider's
+   calls into Google Ads instead: two scripts swapping one number fight.
 
 ## Before the first ad
 
-- **Somebody has to answer, every time, and be able to send a truck.** The
-  page promises "we'll get a truck to you". A demand test that rings out, or
-  can't deliver, leaves a stranded driver on the side of the road and breaks
-  Google's rules on misleading ads. Line up at least one Darwin operator who
-  will take the jobs at an agreed price before the ads go on, and decide what
-  you say when nobody can come.
+- **The partner operator has to answer, every time.** A demand test that
+  rings out leaves a stranded driver on the side of the road and breaks
+  Google's rules on misleading ads. Agree with the operator what happens when
+  they can't come (who they pass the call to, or what they tell the caller),
+  and check the provider's call recordings in the first week.
 - **A privacy page.** GA4 and Google Ads collect data, and Google's policies
   and the Privacy Act expect a privacy policy that says so. Add one before the
   tags are switched on (it is the one thing on this page that isn't built).
@@ -156,21 +189,25 @@ job. Two other ways to read the result:
 ## Two copies of the page
 
 `nt-recoveries.html` is the same page as one standalone HTML file, for
-dropping on any host without Next.js. The two are kept in step by hand: a
-change to the words or the look goes in both. Its number, tags and Ads label
-are marked with comments at the top of the file.
+dropping on any host without Next.js, Inter embedded. It is made from the Next
+build by `npm run html` (`scripts/make-html.mjs`): the same markup, styles and
+tracking code. Change the page, then run it; `npm test` fails while the file
+is out of date. Its own SETTINGS block in `<head>` (`CALL_NUMBER`, the IDs,
+`DNI_SCRIPT_URL`) is the one part meant to be edited in the file.
 
 ## Files
 
 | | |
 |---|---|
-| `app/page.tsx` | The page: hero, 000 line, trust strip, three points, footer |
+| `app/page.tsx` | The page: hero, 000 line, trust strip, three points, footer with the disclosure |
 | `app/globals.css` | The handover's tokens (light and dark) and the few custom styles |
 | `app/layout.tsx` | Inter (self-hosted by next/font), metadata, the tags |
-| `components/CallButton.tsx` | The Call button and footer link; counts each tap |
-| `components/StickyCall.tsx` | The Call bar at the bottom of a phone once the hero's has scrolled away |
-| `components/Tracking.tsx` | GA4, Google Ads and the call-tracking slot, with where each goes |
-| `lib/config.ts` | The number and the tag IDs, from the environment |
+| `components/CallButton.tsx` | The Call button (number in large text) and the footer link |
+| `components/StickyCall.tsx` | The Call bar pinned to the bottom of a phone |
+| `components/Tracking.tsx` | Puts the tracking on the page, with where each piece goes |
+| `lib/config.ts` | `CALL_NUMBER` and the tag IDs |
+| `lib/ntr-track.js` | GA4, Google Ads and the number-swap script; counts every tap on a Call link |
+| `scripts/make-html.mjs` | Makes `nt-recoveries.html` from the build |
 | `tests/landing.test.mjs` | The checks |
 
 ## Sources for the cost figures

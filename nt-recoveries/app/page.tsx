@@ -1,5 +1,12 @@
-/* NT Recoveries: a Darwin tow-truck demand test. One page with one job: get
-   the visitor to call. No form, no payment, no map.
+/* NT Recoveries: a Darwin tow-truck demand test. Call only: one page with
+   one job, get the visitor to call. The number is a call-tracking number that
+   routes to a partner tow operator. There has never been a form, payment or
+   matching step here, so there is nothing hidden to bring back.
+
+   What the page may say: we CONNECT callers with a local independent tow
+   operator, and the price is agreed ON THE PHONE before a truck is sent.
+   Never that we own, run or send trucks, and never the operator's name
+   (tests/landing.test.mjs checks the words).
 
    Voice (the Towapp customer handover, section 8): plain Australian English,
    short sentences, say what happens next; no exclamation marks; never
@@ -7,14 +14,14 @@
 
 import { CallButton, CallLink } from "@/components/CallButton";
 import { StickyCall } from "@/components/StickyCall";
-import { BRAND, PHONE, PHONE_IS_PLACEHOLDER } from "@/lib/config";
+import { BRAND, CALL_NUMBER, CALL_NUMBER_IS_PLACEHOLDER } from "@/lib/config";
 
-const TRUST = ["Price agreed before we send anyone", "Local Darwin operators", "See the truck arrive"];
+const TRUST = ["Price agreed on the phone first", "A local independent tow operator", "One call, nothing to fill in"];
 
 const POINTS = [
-  { title: "One call does it", body: "Tell us where the car is and what's happened. We find a local truck that can come, and tell you when it will get there." },
-  { title: "The price comes first", body: "You hear the price before anyone is sent. Nothing changes unless you agree to it." },
-  { title: "Know it's your truck", body: "We give you the driver's name and the truck's rego. Check the rego before your car is hooked up." },
+  { title: "One call", body: "Your call goes through to a local independent tow operator. Tell them where the car is and what's happened." },
+  { title: "The price comes first", body: "The operator gives you the price on the phone. A truck is only sent once you agree to it." },
+  { title: "Check it's the right truck", body: "Ask for the truck's rego on the call, and check it matches before your car is hooked up." },
 ];
 
 function Tick() {
@@ -39,9 +46,9 @@ function Truck() {
 export default function Home() {
   return (
     <>
-      {PHONE_IS_PLACEHOLDER && (
-        <p className="placeholder-note" role="note" data-testid="placeholder-note">
-          Placeholder number. Set NEXT_PUBLIC_PHONE to your call-tracking number before running ads.
+      {CALL_NUMBER_IS_PLACEHOLDER && (
+        <p className="placeholder-note" role="note" data-testid="placeholder-note" data-placeholder-note>
+          Placeholder number. Set CALL_NUMBER to the call-tracking number before running ads.
         </p>
       )}
 
@@ -56,12 +63,12 @@ export default function Home() {
             Broken down in Darwin?<br />
             Fast local towing.
           </h1>
-          <p className="mt-4 text-[19px] leading-snug text-ink md:text-[21px]">
-            Local operators, price agreed up front. We&apos;ll get a truck to you.
+          <p className="mt-4 text-[19px] leading-snug text-ink md:text-[21px]" data-testid="subline">
+            We connect you with a local independent tow operator. The price is agreed on the phone before a truck is sent.
           </p>
 
-          <div className="mt-7 md:max-w-sm">
-            <CallButton where="hero" className="w-full" />
+          <div className="mt-7 md:max-w-xl">
+            <CallButton where="hero" />
           </div>
 
           <p className="mt-3 text-[17px] text-muted" data-testid="safety">
@@ -92,9 +99,13 @@ export default function Home() {
       <footer className="border-t border-line">
         <div className="mx-auto max-w-4xl px-5 py-8 text-[16px] text-muted">
           <p className="font-bold text-ink">{BRAND}</p>
-          <p className="mt-1">We arrange tows with local operators in Darwin, Northern Territory.</p>
+          <p className="mt-1" data-testid="disclosure">
+            {BRAND} connects callers with a local independent tow operator in Darwin, Northern Territory.
+            We don&apos;t own or run tow trucks: the operator you speak to agrees the price with you and does the tow.
+          </p>
           <p className="mt-3">
-            <CallLink where="footer" className="footer-call">Call {PHONE}</CallLink>
+            {/* One span round the words: the link is a flex box, which would drop the space before the number. */}
+            <CallLink where="footer" className="footer-call"><span>Call <span data-number>{CALL_NUMBER}</span></span></CallLink>
           </p>
           <p className="mt-1">Anyone hurt or in danger? <a href="tel:000" className="safety-link">Call 000 first.</a></p>
           <p className="mt-4 text-[14px]">© {new Date().getFullYear()} {BRAND}</p>
