@@ -1,0 +1,115 @@
+@import "tailwindcss";
+
+/* The Towapp customer handover's design tokens (towapp/HANDOVER.md, section 7):
+   warm off-white surface, deep navy ink, beacon amber for the one action.
+   Dark mode follows the phone's setting, with the handover's dark values.
+   Every pair used for text is WCAG AA or better (tests/landing.test.mjs
+   measures them). */
+:root {
+  --ink: #0E1A2B;          /* deep navy */
+  --surface: #FBF8F2;      /* warm off-white */
+  --surface-2: #F3EEE3;    /* cards, a step down from the page */
+  --line: #E4DDCF;
+  --accent: #F2A900;       /* beacon amber: the Call button */
+  --accent-hover: #DE9B00;
+  --accent-ink: #0E1A2B;   /* text on amber */
+  --accent-strong: #8A5A00;/* amber that reads as text or an icon on the off-white */
+  --muted: #5B6676;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #F4F1EA;
+    --surface: #0B1320;
+    --surface-2: #131D2E;
+    --line: #243046;
+    --accent: #FFB81C;
+    --accent-hover: #FFC64A;
+    --accent-ink: #0E1A2B;
+    --accent-strong: #FFB81C;
+    --muted: #9AA4B2;
+    color-scheme: dark;
+  }
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-strong: var(--accent-strong);
+  --color-muted: var(--muted);
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 18px;            /* body 18px on mobile (handover) */
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  /* Room under the last words for the sticky Call bar on a phone. */
+  padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+}
+@media (min-width: 768px) { body { padding-bottom: 0; } }
+
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 8px; }
+
+/* The Call button: full width on a phone, 64px tall (taps need 48 at least). */
+.call-btn {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  min-height: 64px; padding: 10px 24px; border-radius: 14px;
+  background: var(--accent); color: var(--accent-ink); text-decoration: none;
+  box-shadow: 0 1px 0 rgba(14, 26, 43, .06), 0 8px 22px rgba(242, 169, 0, .28);
+  transition: background-color .15s ease, transform .15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.call-btn:hover { background: var(--accent-hover); }
+.call-btn:active { transform: scale(.98); }
+
+/* "Call 000 first." and the footer's number: inline, but a full 48px to tap. */
+.safety-link, .footer-call {
+  display: inline-flex; align-items: center; min-height: 48px;
+  font-weight: 700; color: var(--ink); text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* Price first · Local operators · See the truck arrive. */
+.trust {
+  display: grid; gap: 12px; padding: 18px 0; margin: 0;
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  list-style: none; font-size: 17px; font-weight: 600;
+}
+@media (min-width: 768px) { .trust { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; } .trust li { white-space: nowrap; } }
+
+.point { list-style: none; background: var(--surface-2); border-radius: 16px; padding: 18px 18px 20px; }
+.point-n {
+  display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--accent); color: var(--accent-ink); font-weight: 700; font-size: 16px;
+}
+
+/* On a phone, once the hero button has scrolled away. Never on a computer. */
+.sticky-call {
+  position: fixed; inset: auto 0 0 0; z-index: 20;
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: var(--surface); border-top: 1px solid var(--line);
+  transform: translateY(110%); visibility: hidden;
+  transition: transform .2s ease, visibility 0s linear .2s;
+}
+.sticky-call.on { transform: none; visibility: visible; transition: transform .2s ease, visibility 0s; }
+@media (min-width: 768px) { .sticky-call { display: none; } }
+
+/* Shown only while the number is still the placeholder. */
+.placeholder-note {
+  margin: 0; padding: 8px 20px; text-align: center; font-size: 14px; font-weight: 600;
+  background: var(--ink); color: var(--surface);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  .call-btn:active { transform: none; }
+}

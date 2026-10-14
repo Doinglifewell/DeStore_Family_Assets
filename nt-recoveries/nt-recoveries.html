@@ -1,0 +1,169 @@
+<!doctype html>
+<!--
+  NT Recoveries: a Darwin tow-truck demand test. One page, one job: get the
+  visitor to call. No form, no payment, no map.
+
+  BEFORE RUNNING ADS, change three things in this file:
+
+  1. THE CALL-TRACKING NUMBER
+     Find and replace every copy of the placeholder (search for both):
+       "08 5550 0123"   -> your number as it should be read, e.g. "08 8123 4567"
+       "tel:+61855500123" -> the same number for dialling: +61, no leading 0,
+                             no spaces, e.g. "tel:+61881234567"
+     The placeholder is in ACMA's range reserved for drama and rings nobody.
+     Then delete the dark "Placeholder number" line at the top of <body>.
+     A call-tracking provider that swaps numbers by script (CallRail,
+     Delacon, Calltrak...): paste its snippet where it says CALL-TRACKING
+     SCRIPT below, and leave your number on the page for it to find.
+
+  2. GA4
+     In the GOOGLE TAGS block in <head>, replace G-XXXXXXXXXX with your GA4
+     Measurement ID and remove the comment markers round it. Each tap on a
+     Call button sends a "click_to_call" event (with where it was tapped);
+     in GA4 > Admin > Events, mark click_to_call as a key event.
+
+  3. GOOGLE ADS CONVERSIONS
+     In the same block, replace AW-XXXXXXXXXX with your Ads tag ID. Then in
+     the script at the bottom of <body>, set:
+       ADS_CALL_CLICK = "AW-XXXXXXXXXX/your-click-label"
+         ("Phone call leads: clicks on your number on your mobile website")
+     and in the head block, the forwarding-number line with
+       "AW-XXXXXXXXXX/your-call-label"
+         ("Calls to a phone number on your website": Google shows its own
+          forwarding number to people from an ad and counts real calls).
+     Calls straight from the ad (a call asset) are counted by Google Ads
+     itself and need nothing here.
+
+  Copy rules (the Towapp customer handover): plain Australian English, no
+  exclamation marks, never "trusted" or "best". Colours: warm off-white
+  #FBF8F2, deep navy #0E1A2B, beacon amber #F2A900; dark mode follows the
+  phone. Every tap target is at least 48px and all text is WCAG AA.
+-->
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NT Recoveries · Towing in Darwin</title>
+<meta name="description" content="Broken down in Darwin? Fast local towing. Local operators, price agreed up front. Call us and we'll get a truck to you.">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#FBF8F2">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0B1320">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230E1A2B'/%3E%3Cpath fill='%23F2A900' d='M10 22h24v20H10zM36 28h10l8 8v6H36z'/%3E%3Cpath d='M36 28l18-10' stroke='%23F2A900' stroke-width='4' stroke-linecap='round'/%3E%3Ccircle cx='19' cy='45' r='5' fill='%23FBF8F2'/%3E%3Ccircle cx='45' cy='45' r='5' fill='%23FBF8F2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap">
+
+<!-- GOOGLE TAGS: remove the comment markers once the IDs are in.
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');                 // GA4
+  gtag('config', 'AW-XXXXXXXXXX');                // Google Ads
+  gtag('config', 'AW-XXXXXXXXXX/your-call-label', // Calls from website (forwarding number)
+       { phone_conversion_number: '08 5550 0123' });
+</script>
+-->
+
+<!-- CALL-TRACKING SCRIPT: a third-party number-swap snippet goes here. -->
+
+<!-- Styles: app/globals.css and Tailwind, compiled. -->
+<style>@font-face{font-family:Inter Fallback;src:local("Arial");ascent-override:90.44%;descent-override:22.52%;line-gap-override:0.00%;size-adjust:107.12%}.__className_d8ebd1{font-family:Inter,Inter Fallback;font-style:normal}.__variable_d8ebd1{--font-inter:"Inter","Inter Fallback"}
+
+/*! tailwindcss v4.1.18 | MIT License | https://tailwindcss.com */@layer properties{@supports (((-webkit-hyphens:none)) and (not (margin-trim:inline))) or ((-moz-orient:inline) and (not (color:rgb(from red r g b)))){*,::backdrop,:after,:before{--tw-border-style:solid;--tw-leading:initial;--tw-font-weight:initial;--tw-tracking:initial;--tw-ordinal:initial;--tw-slashed-zero:initial;--tw-numeric-figure:initial;--tw-numeric-spacing:initial;--tw-numeric-fraction:initial}}}@layer theme{:host,:root{--font-sans:var(--font-inter),ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--spacing:.25rem;--container-sm:24rem;--container-4xl:56rem;--font-weight-semibold:600;--font-weight-bold:700;--tracking-tight:-.025em;--leading-tight:1.25;--leading-snug:1.375;--default-font-family:var(--font-inter),ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;--default-mono-font-family:var(--font-mono)}}@layer base{*,::backdrop,:after,:before{box-sizing:border-box;border:0 solid;margin:0;padding:0}::file-selector-button{box-sizing:border-box;border:0 solid;margin:0;padding:0}:host,html{-webkit-text-size-adjust:100%;tab-size:4;line-height:1.5;font-family:var(--default-font-family,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji");font-feature-settings:var(--default-font-feature-settings,normal);font-variation-settings:var(--default-font-variation-settings,normal);-webkit-tap-highlight-color:transparent}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:var(--default-mono-font-family,ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace);font-feature-settings:var(--default-mono-font-feature-settings,normal);font-variation-settings:var(--default-mono-font-variation-settings,normal);font-size:1em}small{font-size:80%}sub,sup{vertical-align:baseline;font-size:75%;line-height:0;position:relative}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}:-moz-focusring{outline:auto}progress{vertical-align:baseline}summary{display:list-item}menu,ol,ul{list-style:none}audio,canvas,embed,iframe,img,object,svg,video{vertical-align:middle;display:block}img,video{max-width:100%;height:auto}button,input,optgroup,select,textarea{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}::file-selector-button{font:inherit;font-feature-settings:inherit;font-variation-settings:inherit;letter-spacing:inherit;color:inherit;opacity:1;background-color:#0000;border-radius:0}:where(select:is([multiple],[size])) optgroup{font-weight:bolder}:where(select:is([multiple],[size])) optgroup option{padding-inline-start:20px}::file-selector-button{margin-inline-end:4px}::placeholder{opacity:1}@supports (not ((-webkit-appearance:-apple-pay-button))) or (contain-intrinsic-size:1px){::placeholder{color:currentColor}@supports (color:color-mix(in lab,red,red)){::placeholder{color:color-mix(in oklab,currentcolor 50%,transparent)}}}textarea{resize:vertical}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-date-and-time-value{min-height:1lh;text-align:inherit}::-webkit-datetime-edit{display:inline-flex}::-webkit-datetime-edit-fields-wrapper{padding:0}::-webkit-datetime-edit,::-webkit-datetime-edit-year-field{padding-block:0}::-webkit-datetime-edit-day-field,::-webkit-datetime-edit-month-field{padding-block:0}::-webkit-datetime-edit-hour-field,::-webkit-datetime-edit-minute-field{padding-block:0}::-webkit-datetime-edit-millisecond-field,::-webkit-datetime-edit-second-field{padding-block:0}::-webkit-datetime-edit-meridiem-field{padding-block:0}::-webkit-calendar-picker-indicator{line-height:1}:-moz-ui-invalid{box-shadow:none}button,input:where([type=button],[type=reset],[type=submit]){appearance:button}::file-selector-button{appearance:button}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[hidden]:where(:not([hidden=until-found])){display:none!important}}@layer components;@layer utilities{.static{position:static}.sticky{position:sticky}.mx-auto{margin-inline:auto}.mt-1{margin-top:calc(var(--spacing)*1)}.mt-1\.5{margin-top:calc(var(--spacing)*1.5)}.mt-3{margin-top:calc(var(--spacing)*3)}.mt-4{margin-top:calc(var(--spacing)*4)}.mt-7{margin-top:calc(var(--spacing)*7)}.flex{display:flex}.grid{display:grid}.h-6{height:calc(var(--spacing)*6)}.h-7{height:calc(var(--spacing)*7)}.w-6{width:calc(var(--spacing)*6)}.w-7{width:calc(var(--spacing)*7)}.w-auto{width:auto}.w-full{width:100%}.max-w-4xl{max-width:var(--container-4xl)}.shrink-0{flex-shrink:0}.flex-col{flex-direction:column}.items-center{align-items:center}.items-start{align-items:flex-start}.gap-2\.5{gap:calc(var(--spacing)*2.5)}.gap-4{gap:calc(var(--spacing)*4)}.border-t{border-top-style:var(--tw-border-style);border-top-width:1px}.border-line{border-color:var(--line)}.px-5{padding-inline:calc(var(--spacing)*5)}.py-8{padding-block:calc(var(--spacing)*8)}.py-10{padding-block:calc(var(--spacing)*10)}.pt-6{padding-top:calc(var(--spacing)*6)}.pt-10{padding-top:calc(var(--spacing)*10)}.pb-8{padding-bottom:calc(var(--spacing)*8)}.text-\[14px\]{font-size:14px}.text-\[16px\]{font-size:16px}.text-\[17px\]{font-size:17px}.text-\[19px\]{font-size:19px}.text-\[20px\]{font-size:20px}.text-\[38px\]{font-size:38px}.leading-\[1\.08\]{--tw-leading:1.08;line-height:1.08}.leading-snug{--tw-leading:var(--leading-snug);line-height:var(--leading-snug)}.leading-tight{--tw-leading:var(--leading-tight);line-height:var(--leading-tight)}.font-bold{--tw-font-weight:var(--font-weight-bold);font-weight:var(--font-weight-bold)}.font-semibold{--tw-font-weight:var(--font-weight-semibold);font-weight:var(--font-weight-semibold)}.tracking-tight{--tw-tracking:var(--tracking-tight);letter-spacing:var(--tracking-tight)}.text-balance{text-wrap:balance}.text-accent{color:var(--accent)}.text-accent-strong{color:var(--accent-strong)}.text-ink,.text-ink\/90{color:var(--ink)}@supports (color:color-mix(in lab,red,red)){.text-ink\/90{color:color-mix(in oklab,var(--ink)90%,transparent)}}.text-muted{color:var(--muted)}.tabular-nums{--tw-numeric-spacing:tabular-nums;font-variant-numeric:var(--tw-ordinal,)var(--tw-slashed-zero,)var(--tw-numeric-figure,)var(--tw-numeric-spacing,)var(--tw-numeric-fraction,)}@media (min-width:48rem){.md\:max-w-sm{max-width:var(--container-sm)}.md\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.md\:pt-16{padding-top:calc(var(--spacing)*16)}.md\:text-\[21px\]{font-size:21px}.md\:text-\[54px\]{font-size:54px}}}:root{--ink:#0e1a2b;--surface:#fbf8f2;--surface-2:#f3eee3;--line:#e4ddcf;--accent:#f2a900;--accent-hover:#de9b00;--accent-ink:#0e1a2b;--accent-strong:#8a5a00;--muted:#5b6676;color-scheme:light}@media (prefers-color-scheme:dark){:root{--ink:#f4f1ea;--surface:#0b1320;--surface-2:#131d2e;--line:#243046;--accent:#ffb81c;--accent-hover:#ffc64a;--accent-ink:#0e1a2b;--accent-strong:#ffb81c;--muted:#9aa4b2;color-scheme:dark}}html{-webkit-text-size-adjust:100%}body{background:var(--surface);color:var(--ink);font-family:var(--font-sans);-webkit-font-smoothing:antialiased;padding-bottom:calc(96px + env(safe-area-inset-bottom,0px));font-size:18px;line-height:1.5}@media (min-width:768px){body{padding-bottom:0}}a{color:inherit}:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:8px}.call-btn{background:var(--accent);min-height:64px;color:var(--accent-ink);-webkit-tap-highlight-color:transparent;border-radius:14px;justify-content:center;align-items:center;gap:14px;padding:10px 24px;text-decoration:none;transition:background-color .15s,transform .15s;display:flex;box-shadow:0 1px #0e1a2b0f,0 8px 22px #f2a90047}.call-btn:hover{background:var(--accent-hover)}.call-btn:active{transform:scale(.98)}.footer-call,.safety-link{min-height:48px;color:var(--ink);text-underline-offset:3px;align-items:center;font-weight:700;text-decoration:underline;display:inline-flex}.trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);gap:12px;margin:0;padding:18px 0;font-size:17px;font-weight:600;list-style:none;display:grid}@media (min-width:768px){.trust{flex-wrap:wrap;justify-content:space-between;gap:12px 24px;display:flex}.trust li{white-space:nowrap}}.point{background:var(--surface-2);border-radius:16px;padding:18px 18px 20px;list-style:none}.point-n{background:var(--accent);width:32px;height:32px;color:var(--accent-ink);border-radius:50%;place-items:center;font-size:16px;font-weight:700;display:grid}.sticky-call{z-index:20;padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--surface);border-top:1px solid var(--line);visibility:hidden;transition:transform .2s,visibility 0s linear .2s;position:fixed;inset:auto 0 0;transform:translateY(110%)}.sticky-call.on{visibility:visible;transition:transform .2s,visibility;transform:none}@media (min-width:768px){.sticky-call{display:none}}.placeholder-note{text-align:center;background:var(--ink);color:var(--surface);margin:0;padding:8px 20px;font-size:14px;font-weight:600}@media (prefers-reduced-motion:reduce){*,:after,:before{transition-duration:.01ms!important;animation-duration:.01ms!important}.call-btn:active{transform:none}}@property --tw-border-style{syntax:"*";inherits:false;initial-value:solid}@property --tw-leading{syntax:"*";inherits:false}@property --tw-font-weight{syntax:"*";inherits:false}@property --tw-tracking{syntax:"*";inherits:false}@property --tw-ordinal{syntax:"*";inherits:false}@property --tw-slashed-zero{syntax:"*";inherits:false}@property --tw-numeric-figure{syntax:"*";inherits:false}@property --tw-numeric-spacing{syntax:"*";inherits:false}@property --tw-numeric-fraction{syntax:"*";inherits:false}</style>
+</head>
+<body>
+<p class="placeholder-note" role="note">Placeholder number. Replace 08 5550 0123 with your call-tracking number before running ads.</p>
+
+<header class="mx-auto flex max-w-4xl items-center gap-2.5 px-5 pt-6">
+  <svg class="h-6 w-auto text-accent" viewBox="0 0 32 20" aria-hidden="true" focusable="false"><path fill="currentColor" d="M2 4h14v10H2zM17 7h6l4 4v3H17z"/><path d="M17 7l10-5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="7" cy="16" r="2.6" fill="var(--ink)"/><circle cx="23" cy="16" r="2.6" fill="var(--ink)"/></svg>
+  <span class="text-[19px] font-bold tracking-tight">NT Recoveries</span>
+</header>
+
+<main class="mx-auto max-w-4xl px-5">
+  <section class="pt-10 pb-8 md:pt-16" aria-labelledby="headline">
+    <h1 id="headline" class="text-[38px] leading-[1.08] font-bold tracking-tight text-balance md:text-[54px]">Broken down in Darwin?<br>Fast local towing.</h1>
+    <p class="mt-4 text-[19px] leading-snug text-ink md:text-[21px]">Local operators, price agreed up front. We'll get a truck to you.</p>
+    <div class="mt-7 md:max-w-sm">
+      <a href="tel:+61855500123" class="call-btn w-full" data-call="hero" aria-label="Call 08 5550 0123">
+        <svg class="h-7 w-7 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+        <span class="flex flex-col items-start leading-tight"><span class="text-[20px] font-bold">Call now</span><span class="text-[17px] font-semibold tabular-nums">08 5550 0123</span></span>
+      </a>
+    </div>
+    <p class="mt-3 text-[17px] text-muted">Anyone hurt or in danger? <a href="tel:000" class="safety-link">Call 000 first.</a></p>
+  </section>
+
+  <ul class="trust" aria-label="How it works">
+    <li class="flex items-center gap-2.5"><svg class="h-6 w-6 shrink-0 text-accent-strong" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="currentColor" opacity=".16"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Price agreed before we send anyone</span></li>
+    <li class="flex items-center gap-2.5"><svg class="h-6 w-6 shrink-0 text-accent-strong" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="currentColor" opacity=".16"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Local Darwin operators</span></li>
+    <li class="flex items-center gap-2.5"><svg class="h-6 w-6 shrink-0 text-accent-strong" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="11" fill="currentColor" opacity=".16"/><path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>See the truck arrive</span></li>
+  </ul>
+
+  <section class="py-10" aria-label="What happens when you call">
+    <ol class="grid gap-4 md:grid-cols-3">
+      <li class="point"><span class="point-n" aria-hidden="true">1</span>
+        <h2 class="mt-3 text-[19px] font-bold leading-tight">One call does it</h2>
+        <p class="mt-1.5 text-[17px] leading-snug text-muted">Tell us where the car is and what's happened. We find a local truck that can come, and tell you when it will get there.</p></li>
+      <li class="point"><span class="point-n" aria-hidden="true">2</span>
+        <h2 class="mt-3 text-[19px] font-bold leading-tight">The price comes first</h2>
+        <p class="mt-1.5 text-[17px] leading-snug text-muted">You hear the price before anyone is sent. Nothing changes unless you agree to it.</p></li>
+      <li class="point"><span class="point-n" aria-hidden="true">3</span>
+        <h2 class="mt-3 text-[19px] font-bold leading-tight">Know it's your truck</h2>
+        <p class="mt-1.5 text-[17px] leading-snug text-muted">We give you the driver's name and the truck's rego. Check the rego before your car is hooked up.</p></li>
+    </ol>
+  </section>
+</main>
+
+<footer class="border-t border-line">
+  <div class="mx-auto max-w-4xl px-5 py-8 text-[16px] text-muted">
+    <p class="font-bold text-ink">NT Recoveries</p>
+    <p class="mt-1">We arrange tows with local operators in Darwin, Northern Territory.</p>
+    <p class="mt-3"><a href="tel:+61855500123" class="footer-call" data-call="footer">Call 08 5550 0123</a></p>
+    <p class="mt-1">Anyone hurt or in danger? <a href="tel:000" class="safety-link">Call 000 first.</a></p>
+    <p class="mt-4 text-[14px]">© <span id="year">2026</span> NT Recoveries</p>
+  </div>
+</footer>
+
+<!-- On a phone, once the hero's Call button has scrolled away, the same button waits at the bottom. -->
+<div class="sticky-call" aria-hidden="true">
+  <a href="tel:+61855500123" class="call-btn w-full" data-call="sticky" aria-label="Call 08 5550 0123">
+    <svg class="h-7 w-7 shrink-0" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+    <span class="flex flex-col items-start leading-tight"><span class="text-[20px] font-bold">Call now</span><span class="text-[17px] font-semibold tabular-nums">08 5550 0123</span></span>
+  </a>
+</div>
+
+<script>
+/* Google Ads click-to-call conversion: "AW-XXXXXXXXXX/your-click-label", or leave empty. */
+var ADS_CALL_CLICK = "";
+
+/* Count each tap on a Call button (GA4 click_to_call, and the Ads conversion),
+   never in the way of the call itself. Nothing happens until gtag is loaded. */
+document.addEventListener("click", function (e) {
+  var a = e.target.closest && e.target.closest("[data-call]");
+  if (!a || typeof window.gtag !== "function") return;
+  try {
+    gtag("event", "click_to_call", { link_location: a.getAttribute("data-call"), transport_type: "beacon" });
+    if (ADS_CALL_CLICK) gtag("event", "conversion", { send_to: ADS_CALL_CLICK, transport_type: "beacon" });
+  } catch (err) {}
+});
+
+/* The sticky bar shows once the hero's button and the footer's number are both off screen. */
+(function () {
+  var bar = document.querySelector(".sticky-call");
+  var watched = document.querySelectorAll("[data-call='hero'], [data-call='footer']");
+  if (!bar || !watched.length || !("IntersectionObserver" in window)) return;
+  var seen = new Map();
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { seen.set(en.target, en.isIntersecting); });
+    var show = !Array.from(seen.values()).some(Boolean);
+    bar.classList.toggle("on", show);
+    bar.setAttribute("aria-hidden", show ? "false" : "true");
+  });
+  watched.forEach(function (el) { seen.set(el, true); io.observe(el); });
+})();
+
+document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
